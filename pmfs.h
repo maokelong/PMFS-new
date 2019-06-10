@@ -141,12 +141,14 @@ extern atomic64_t fsync_pages;
 
 typedef struct timespec timing_t;
 
+#define	INIT_TIMING(X)	timing_t X = {0}
+
 #define PMFS_START_TIMING(name, start) \
 	{if (measure_timing) getrawmonotonic(&start);}
 
 #define PMFS_END_TIMING(name, start) \
 	{if (measure_timing) { \
-		timing_t end; \
+		INIT_TIMING(end); \
 		getrawmonotonic(&end); \
 		Timingstats[name] += \
 			(end.tv_sec - start.tv_sec) * 1000000000 + \

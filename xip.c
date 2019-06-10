@@ -32,7 +32,7 @@ do_xip_mapping_read(struct address_space *mapping,
 	unsigned long offset;
 	loff_t isize, pos;
 	size_t copied = 0, error = 0;
-	timing_t memcpy_time;
+	INIT_TIMING(memcpy_time);
 
 	pos = *ppos;
 	index = pos >> PAGE_SHIFT;
@@ -134,7 +134,7 @@ ssize_t pmfs_xip_file_read(struct file *filp, char __user *buf,
 			    size_t len, loff_t *ppos)
 {
 	ssize_t res;
-	timing_t xip_read_time;
+	INIT_TIMING(xip_read_time);
 
 	PMFS_START_TIMING(xip_read_t, xip_read_time);
 //	rcu_read_lock();
@@ -189,7 +189,8 @@ __pmfs_xip_file_write(struct address_space *mapping, const char __user *buf,
 	size_t      bytes;
 	ssize_t     written = 0;
 	struct pmfs_inode *pi;
-	timing_t memcpy_time, write_time;
+	INIT_TIMING(memcpy_time);
+	INIT_TIMING(write_time);
 
 	PMFS_START_TIMING(internal_write_t, write_time);
 	pi = pmfs_get_inode(sb, inode->i_ino);
@@ -260,7 +261,7 @@ static ssize_t pmfs_file_write_fast(struct super_block *sb, struct inode *inode,
 {
 	void *xmem = pmfs_get_block(sb, block);
 	size_t copied, ret = 0, offset;
-	timing_t memcpy_time;
+	INIT_TIMING(memcpy_time);
 
 	offset = pos & (sb->s_blocksize - 1);
 	PM_TX_BEGIN();
@@ -352,7 +353,8 @@ ssize_t pmfs_xip_file_write(struct file *filp, const char __user *buf,
 	size_t count, offset, eblk_offset, ret;
 	unsigned long start_blk, end_blk, num_blocks, max_logentries;
 	bool same_block;
-	timing_t xip_write_time, xip_write_fast_time;
+	INIT_TIMING(xip_write_time);
+	INIT_TIMING(xip_write_fast_time);
 
 	PMFS_START_TIMING(xip_write_t, xip_write_time);
 
@@ -498,7 +500,7 @@ static int __pmfs_xip_file_fault(struct vm_area_struct *vma,
 static int pmfs_xip_file_fault(struct vm_fault *vmf)
 {
 	int ret = 0;
-	timing_t fault_time;
+	INIT_TIMING(fault_time);
 
 	PMFS_START_TIMING(mmap_fault_t, fault_time);
 	rcu_read_lock();
